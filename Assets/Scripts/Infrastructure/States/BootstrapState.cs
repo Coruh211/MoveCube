@@ -9,6 +9,7 @@ namespace Infrastructure.States
     public class BootstrapState: IState
     {
         private const string Initial = "Initial";
+        private const string Payload = "Game";
         private readonly GameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
         private readonly AllServices _services;
@@ -34,7 +35,7 @@ namespace Infrastructure.States
         }
 
         private void EnterLoadLevel() => 
-            _stateMachine.Enter<LoadLevelState, string>("Game");
+            _stateMachine.Enter<LoadLevelState, string>(Payload);
 
         private void RegisterServices()
         {

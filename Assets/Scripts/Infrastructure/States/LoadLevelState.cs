@@ -1,6 +1,9 @@
 ﻿using Infrastructure.Factory;
 using Infrastructure.Services;
 using LoadScreen;
+using Logic.Logic.Cube;
+using Logic.Logic.UI;
+using StaticData;
 using UnityEngine;
 
 namespace Infrastructure.States
@@ -14,6 +17,7 @@ namespace Infrastructure.States
         private readonly AllServices _allServices;
         private GameObject[] spawnPoints;
         private GameObject spawnContainer;
+        private object uiSelector;
 
 
         public LoadLevelState(GameStateMachine stateMachine, SceneLoader sceneLoader, LoadCanvas loadCanvas,
@@ -40,11 +44,17 @@ namespace Infrastructure.States
 
         private void RegisterServices()
         {
-            
+            _allServices.RegisterSingle<IUISelector>(new UISelector());
+            _allServices.RegisterSingle<ICubeSpawner>(new CubeSpawner(_allServices.Single<IUISelector>()));
         }
 
         private void OnLoaded()
         {
+            var hud = _gameFactory.CreateObject(AssetPath.HUDPath);
+            var inputFieldsList = hud.GetComponent<HUDPresenter>().GetInputFieldsList;
+            var selector = _allServices.Single<IUISelector>();
+            selector.Init(inputFieldsList);
+
             _stateMachine.Enter<GameLoopState>();
         }
     }
